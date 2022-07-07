@@ -58,8 +58,8 @@ TypeId tid = TypeId::LookupByName("ns3::UdpSocketFactory");
 NodeContainer c;
 double distance;
 double interval = 0.1;
-uint32_t helloSendAfter = 5;
-uint32_t numPair = 150;
+uint32_t helloSendAfter = 1;
+uint32_t numPair = 100;
 
 uint32_t gridSize = 1000;
 uint32_t BOARD_ROWS = 4;
@@ -513,13 +513,13 @@ void ScheduleNeighbor(Ptr<Socket> socket, Ptr<Packet> packet, NodeHandler *curre
                     rec_distance[i] = temp_distance;
                     check[i] = true;
 
-                    if ((int)socket->GetNode()->GetId() == 301)
-                    {
-                        std::cout << "ipSender : " << ipSender << "\t" << node << "\tdistance :" << temp_distance << "\tvalidation :" << validation << "\tgrid : ";
-                        for (int i = 0; i < 3; i++)
-                            std::cout << index_row[i] << "," << index_col[i] << "\t";
-                        std::cout << std::endl;
-                    }
+                    // if ((int)socket->GetNode()->GetId() == 301)
+                    // {
+                    //     std::cout << "ipSender : " << ipSender << "\t" << node << "\tdistance :" << temp_distance << "\tvalidation :" << validation << "\tgrid : ";
+                    //     for (int i = 0; i < 3; i++)
+                    //         std::cout << index_row[i] << "," << index_col[i] << "\t";
+                    //     std::cout << std::endl;
+                    // }
                 }
             }
         }
@@ -537,8 +537,8 @@ void ScheduleNeighbor(Ptr<Socket> socket, Ptr<Packet> packet, NodeHandler *curre
             if (currentNode->searchInStack(UID) == false)
                 currentNode->pushInStack(UID);
 
-            if ((int)socket->GetNode()->GetId() == 301)
-                std::cout << Simulator::Now().GetSeconds() << "\t" << currentNode->getNodeID() << "\tget nextHopAddress: " << nextHopAddress[i] << std::endl;
+            // if ((int)socket->GetNode()->GetId() == 301)
+            std::cout << Simulator::Now().GetSeconds() << "\t" << currentNode->getNodeID() << "\tget nextHopAddress: " << nextHopAddress[i] << std::endl;
 
             Ptr<Socket> new_socket = Socket::CreateSocket(c.Get(socket->GetNode()->GetId()), tid);
             InetSocketAddress remote = InetSocketAddress(nextHopAddress[i], 80);
@@ -622,8 +622,8 @@ void ReceivePacket(Ptr<Socket> socket)
 
             if (ipSender == nextHopAddress && exist == true)
             {
-                if ((int)socket->GetNode()->GetId() == 301)
-                    NS_LOG_UNCOND(time << "s\t" << ipReceiver << "\t" << socket->GetNode()->GetId() << "\tReceived pkt type: " << payload.getType() << "\twith uid: " << UID << "\tfrom: " << ipSender << "\t" << payload.getNeighborId());
+                // if ((int)socket->GetNode()->GetId() == 301)
+                //     NS_LOG_UNCOND(time << "s\t" << ipReceiver << "\t" << socket->GetNode()->GetId() << "\tReceived pkt type: " << payload.getType() << "\twith uid: " << UID << "\tfrom: " << ipSender << "\t" << payload.getNeighborId());
 
                 currentNode->increaseBytesReceived();
                 currentNode->setFindNeighbor(neighborId);
@@ -638,8 +638,8 @@ void ReceivePacket(Ptr<Socket> socket)
                 currentNode->increaseBytesReceived();
                 currentNode->increaseBuffer();
 
-                if ((int)socket->GetNode()->GetId() == 301)
-                    NS_LOG_UNCOND(time << "s\t" << ipReceiver << "\t" << socket->GetNode()->GetId() << "\tReceived pkt type: " << payload.getType() << "\twith uid: " << UID << "\tfrom: " << ipSender);
+                // if ((int)socket->GetNode()->GetId() == 301)
+                //     NS_LOG_UNCOND(time << "s\t" << ipReceiver << "\t" << socket->GetNode()->GetId() << "\tReceived pkt type: " << payload.getType() << "\twith uid: " << UID << "\tfrom: " << ipSender);
 
                 if ((dataForPackets[UID].start + (double)TTL >= Simulator::Now().GetSeconds()) && currentNode->checkBufferSize())
                 {
@@ -662,19 +662,19 @@ int main(int argc, char *argv[])
     distance = 500;
     helloSendAfter = 1;
 
-    // double simulationTime = 569.00
+    // double simulationTime = 569.00;
     double simulationTime = 360.00;
     double sendUntil = 50.00;
     double warmingTime = 10.00;
     uint32_t seed = 91;
 
-    numPair = 150;
-    uint32_t numNodes = 3214;
-    uint32_t sendAfter = 10;
+    numPair = 100;
+    uint32_t numNodes = 3000;
+    uint32_t sendAfter = 1;
     uint32_t sinkNode;
     uint32_t sourceNode;
 
-    uint32_t TTL = 30;
+    uint32_t TTL = 10; // CHANGE HERE
     uint32_t UID = 1;
 
     CommandLine cmd;
@@ -698,7 +698,7 @@ int main(int argc, char *argv[])
     std::string tempstr;
     std::ifstream file;
 
-    file.open("/home/ycpin/Dataset/平日_7_9/exist_file/exist_2022-01-04_150_0.txt", std::ios::in);
+    file.open("/home/ycpin/Dataset/平日_7_9/exist_file/exist_2022-01-05_100_0.txt", std::ios::in);
     while (getline(file, tempstr))
     {
         std::stringstream ss(tempstr);
@@ -768,7 +768,7 @@ int main(int argc, char *argv[])
     NetDeviceContainer devices = wifi.Install(wifiPhy, wifiMac, c);
 
     // Import the trace file.
-    Ns2MobilityHelper ns2 = Ns2MobilityHelper("/home/ycpin/Dataset/平日_7_9/mobility_file/mobility_2022-01-04_150_0.tcl");
+    Ns2MobilityHelper ns2 = Ns2MobilityHelper("/home/ycpin/Dataset/平日_7_9/mobility_file/mobility_2022-01-05_100_0.tcl");
     ns2.Install(); // configure movements for each node, while reading trace file
 
     InternetStackHelper internet;
